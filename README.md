@@ -6,6 +6,8 @@ To build a mobile chat app in React Native, optimized for both iOS and Android d
 
 ## URL Address:
 
+https://github.com/rosswyman/chat-app
+
 ## Dependencies:
 
 To be determined
