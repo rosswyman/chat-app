@@ -9,6 +9,7 @@ import {
 	ScrollView,
 	ImageBackground,
 	TouchableOpacity,
+	KeyboardAvoidingView,
 } from 'react-native';
 
 export default class StartPage extends Component {
@@ -36,9 +37,16 @@ export default class StartPage extends Component {
 					<View style={styles.appTitleBox}>
 						<Text style={styles.titleText}>VERBOSE</Text>
 					</View>
-					<View style={styles.userOptionsBox}>
+					{/* KeyboardAvoidingView prevents the keyboard from hiding the text input */}
+					<KeyboardAvoidingView
+						style={styles.userOptionsBox}
+						behavior="padding"
+					>
 						<View style={styles.userNameBox}>
 							<TextInput
+								accessible={true}
+								accessibilityLabel="Username field"
+								accessibilityHint="Enter your preffered username here"
 								style={{
 									height: 40,
 									borderColor: 'gray',
@@ -58,6 +66,9 @@ export default class StartPage extends Component {
 							</Text>
 							<View style={styles.chooseBackgroundColor}>
 								<TouchableOpacity
+									accessible={true}
+									accessibilityLabel="Background color option 1"
+									accessibilityHint="Selects a black background"
 									style={styles.backgroundColor1}
 									onPress={() =>
 										this.setState({
@@ -67,6 +78,9 @@ export default class StartPage extends Component {
 									}
 								/>
 								<TouchableOpacity
+									accessible={true}
+									accessibilityLabel="Background color option 2"
+									accessibilityHint="Selects a dark purple background"
 									style={styles.backgroundColor2}
 									onPress={() =>
 										this.setState({
@@ -76,6 +90,9 @@ export default class StartPage extends Component {
 									}
 								/>
 								<TouchableOpacity
+									accessible={true}
+									accessibilityLabel="Background color option 3"
+									accessibilityHint="Selects a light blue background"
 									style={styles.backgroundColor3}
 									onPress={() =>
 										this.setState({
@@ -85,6 +102,9 @@ export default class StartPage extends Component {
 									}
 								/>
 								<TouchableOpacity
+									accessible={true}
+									accessibilityLabel="Background color option 4"
+									accessibilityHint="Selects a light greeb background"
 									style={styles.backgroundColor4}
 									onPress={() =>
 										this.setState({
@@ -97,6 +117,9 @@ export default class StartPage extends Component {
 						</View>
 						<View style={styles.startChatButtonBox}>
 							<TouchableOpacity
+								accessible={true}
+								accessibilityLabel="Start Chat Button"
+								accessibilityHint="Press this button to enter the chat"
 								style={styles.startChatButton}
 								title="Start Chatting"
 								// Passing on name, backgroundColor, and textColor as props
@@ -111,7 +134,7 @@ export default class StartPage extends Component {
 								<Text style={styles.startChatButtonText}>Start Chatting</Text>
 							</TouchableOpacity>
 						</View>
-					</View>
+					</KeyboardAvoidingView>
 				</ImageBackground>
 			</View>
 		);
