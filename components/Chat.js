@@ -8,14 +8,65 @@ import {
 	Alert,
 	ScrollView,
 	TouchableOpacity,
+	Platform,
+	KeyboardAvoidingView,
 } from 'react-native';
 
-export default class StartPage extends Component {
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+
+export default class Chat extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			name: this.props.route.params.userName,
+			messages: [],
 		};
+	}
+
+	componentDidMount() {
+		this.setState({
+			messages: [
+				{
+					_id: 1,
+					text: 'Hello developer',
+					createdAt: new Date(),
+					user: {
+						_id: 2,
+						name: 'React Native',
+						avatar: 'https://placeimg.com/140/140/any',
+					},
+				},
+				{
+					_id: 2,
+					text: this.state.name + ' has entered the chat.',
+					createdAt: new Date(),
+					system: true,
+				},
+			],
+		});
+	}
+
+	onSend(messages = []) {
+		this.setState((previousState) => ({
+			// takes the previous state and adds the new messages to it
+			messages: GiftedChat.append(previousState.messages, messages),
+		}));
+	}
+
+	renderBubble(props) {
+		return (
+			<Bubble
+				{...props}
+				wrapperStyle={{
+					left: {
+						backgroundColor: '#fff',
+					},
+					right: {
+						backgroundColor: '#000',
+					},
+				}}
+			/>
+		);
 	}
 
 	// for use with testing and debugging
@@ -35,6 +86,7 @@ export default class StartPage extends Component {
 			>
 				<View style={styles.navBar}>
 					<Text
+						// the text color is specified to maintain contrast with the background colors
 						style={{
 							color: this.props.route.params.textColor,
 						}}
@@ -42,7 +94,27 @@ export default class StartPage extends Component {
 						{this.state.name}'s Chat
 					</Text>
 				</View>
-				<TextInput
+				{/* This 'flex: 1' will set the width and height of the view to 100% */}
+				<View style={{ flex: 1 }}>
+					<GiftedChat
+						accessible={true}
+						accessibilityLabel="Chat field"
+						accessibilityHint="Here you will find the messages in this chat.  The field to input a message is at the bottom."
+						renderBubble={this.renderBubble.bind(this)}
+						messages={this.state.messages}
+						onSend={(messages) => this.onSend(messages)}
+						user={{
+							_id: 1,
+						}}
+					/>
+					{/* The following is included to prevent the keyboard from obsuring the message field */}
+					{Platform.OS === 'android' ? (
+						<KeyboardAvoidingView behavior="height" />
+					) : null}
+				</View>
+
+				{/* Can probably delete this in the near future, but I'm holding on to it for the time being. 
+        <TextInput
 					style={{
 						height: 80,
 						borderColor: 'gray',
@@ -63,7 +135,7 @@ export default class StartPage extends Component {
 					}}
 				>
 					<Text style={styles.sendMessageButtonText}>Send</Text>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 			</View>
 		);
 	}
