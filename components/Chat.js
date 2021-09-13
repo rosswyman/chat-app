@@ -15,6 +15,7 @@ import {
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 import firestore from 'firebase';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class Chat extends Component {
 	constructor(props) {
@@ -45,38 +46,6 @@ export default class Chat extends Component {
 		}
 
 		this.referenceChatMessages = firebase.firestore().collection('messages');
-	}
-
-	componentDidMount() {
-		const name = this.props.route.params.userName;
-		// creating a references to messages collection
-		this.referenceMessagesUser = firebase
-			.firestore()
-			.collection('messages')
-			.where('uid', '==', this.state.uid);
-
-		this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-			// if the user is not signed in, they will be signed in anonymously
-			if (!user) {
-				firebase.auth().signInAnonymously();
-			}
-			this.setState({
-				uid: user.uid,
-				messages: [],
-				user: {
-					_id: user.uid,
-					name: name,
-				},
-			});
-			this.unsubscribe = this.referenceChatMessages
-				.orderBy('createdAt', 'desc')
-				.onSnapshot(this.onCollectionUpdate);
-		});
-	}
-
-	componentWillUnmount() {
-		this.authUnsubscribe();
-		this.unsubscribe();
 	}
 
 	addMessage() {
@@ -141,6 +110,40 @@ export default class Chat extends Component {
 	// for use with testing and debugging
 	alertMyText(input = []) {
 		Alert.alert(input.text);
+	}
+
+	componentDidMount() {
+		this.getMessages();
+
+		const name = this.props.route.params.userName;
+		// creating a references to messages collection
+		this.referenceMessagesUser = firebase
+			.firestore()
+			.collection('messages')
+			.where('uid', '==', this.state.uid);
+
+		this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+			// if the user is not signed in, they will be signed in anonymously
+			if (!user) {
+				firebase.auth().signInAnonymously();
+			}
+			this.setState({
+				uid: user.uid,
+				messages: [],
+				user: {
+					_id: user.uid,
+					name: name,
+				},
+			});
+			this.unsubscribe = this.referenceChatMessages
+				.orderBy('createdAt', 'desc')
+				.onSnapshot(this.onCollectionUpdate);
+		});
+	}
+
+	componentWillUnmount() {
+		this.authUnsubscribe();
+		this.unsubscribe();
 	}
 
 	render() {
