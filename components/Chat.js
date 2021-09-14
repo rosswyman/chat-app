@@ -30,6 +30,7 @@ export default class Chat extends Component {
 			},
 			messages: [],
 			uid: 0,
+			isConnected: false,
 		};
 
 		const firebaseConfig = {
@@ -80,6 +81,7 @@ export default class Chat extends Component {
 				'messages',
 				JSON.stringify(this.state.messages)
 			);
+			console.log('saveMessages called');
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -160,6 +162,7 @@ export default class Chat extends Component {
 		NetInfo.fetch().then((connection) => {
 			if (connection.isConnected) {
 				console.log('online');
+				this.setState({ isConnected: true });
 
 				this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
 					// if the user is not signed in, they will be signed in anonymously
@@ -174,11 +177,13 @@ export default class Chat extends Component {
 							name: name,
 						},
 					});
+
 					this.unsubscribe = this.referenceChatMessages
 						.orderBy('createdAt', 'desc')
 						.onSnapshot(this.onCollectionUpdate);
 				});
 			} else {
+				this.setState({ isConnected: false });
 				console.log('offline');
 				this.getMessages();
 			}
