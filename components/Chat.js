@@ -50,6 +50,7 @@ export default class Chat extends Component {
 		this.referenceChatMessages = firebase.firestore().collection('messages');
 	}
 
+	//display messages from AsyncStorage
 	async getMessages() {
 		let messages = '';
 		try {
@@ -75,6 +76,7 @@ export default class Chat extends Component {
 		});
 	}
 
+	// save messages to Asyncstorage
 	async saveMessages() {
 		try {
 			await AsyncStorage.setItem(
@@ -146,6 +148,7 @@ export default class Chat extends Component {
 		);
 	}
 
+	// hides the inputtoolbar if the user is offline
 	renderInputToolbar(props) {
 		if (this.state.isConnected == false) {
 		} else {
@@ -163,7 +166,6 @@ export default class Chat extends Component {
 			if (connection.isConnected) {
 				console.log('online');
 				this.setState({ isConnected: true });
-
 				this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
 					// if the user is not signed in, they will be signed in anonymously
 					if (!user) {
