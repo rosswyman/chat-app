@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 // import react native gesture handler
@@ -16,15 +16,21 @@ import Start from './components/Start';
 // Create the navigator
 const Stack = createStackNavigator();
 
-export default function App() {
-	return (
-		<NavigationContainer>
-			<Stack.Navigator initialRouteName="Start">
-				<Stack.Screen name="Start" component={Start} />
-				<Stack.Screen name="Chat" component={Chat} />
-			</Stack.Navigator>
-		</NavigationContainer>
-	);
+export default class App extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		return (
+			<NavigationContainer>
+				<Stack.Navigator initialRouteName="Start">
+					<Stack.Screen name="Start" component={Start} />
+					<Stack.Screen name="Chat" component={Chat} />
+				</Stack.Navigator>
+			</NavigationContainer>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
