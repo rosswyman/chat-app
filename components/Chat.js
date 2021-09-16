@@ -11,12 +11,14 @@ import {
 	Platform,
 	KeyboardAvoidingView,
 } from 'react-native';
-
+import CustomActions from './CustomActions';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 import firestore from 'firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
+import { Constants, Location, Permissions } from 'expo';
 
 export default class Chat extends Component {
 	constructor(props) {
@@ -31,6 +33,7 @@ export default class Chat extends Component {
 			messages: [],
 			uid: 0,
 			isConnected: false,
+			image: null,
 		};
 
 		const firebaseConfig = {
@@ -73,6 +76,7 @@ export default class Chat extends Component {
 			image: newMessage.image || null,
 			text: newMessage.text || '',
 			user: newMessage.user,
+			location: newMessage.location || null,
 		});
 	}
 
@@ -125,6 +129,8 @@ export default class Chat extends Component {
 				text: data.text,
 				createdAt: data.createdAt.toDate(),
 				user: data.user,
+				image: data.image || null,
+				location: data.location || null,
 			});
 		});
 		this.setState({
@@ -154,6 +160,27 @@ export default class Chat extends Component {
 		} else {
 			return <InputToolbar {...props} />;
 		}
+	}
+
+	renderCustomActions = (props) => <CustomActions {...props} />;
+
+	//custom map view
+	renderCustomView(props) {
+		const { currentMessage } = props;
+		if (currentMessage.location) {
+			return (
+				<MapView
+					style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+					region={{
+						latitude: currentMessage.location.latitude,
+						longitude: currentMessage.location.longitude,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					}}
+				/>
+			);
+		}
+		return null;
 	}
 
 	// for use with testing and debugging
@@ -233,6 +260,8 @@ export default class Chat extends Component {
 						messages={this.state.messages}
 						renderBubble={this.renderBubble.bind(this)}
 						renderInputToolbar={this.renderInputToolbar.bind(this)}
+						renderActions={this.renderCustomActions}
+						renderCustomView={this.renderCustomView}
 						onSend={(messages) => this.onSend(messages)}
 						user={this.state.user}
 					/>

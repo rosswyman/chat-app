@@ -12,6 +12,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 //Import screens
 import Chat from './components/Chat';
 import Start from './components/Start';
+import CustomActions from './components/CustomActions';
 
 // Create the navigator
 const Stack = createStackNavigator();
@@ -20,6 +21,10 @@ export default class App extends Component {
 	constructor(props) {
 		super(props);
 	}
+
+	renderCustomActions = (props) => {
+		return <CustomActions {...props} />;
+	};
 
 	render() {
 		return (
