@@ -1,24 +1,20 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+import NetInfo from '@react-native-community/netinfo';
+import firebase from 'firebase';
 import React, { Component } from 'react';
 import {
 	StyleSheet,
-	TextInput,
 	Text,
 	View,
 	Button,
 	Alert,
-	ScrollView,
-	TouchableOpacity,
 	Platform,
 	KeyboardAvoidingView,
 } from 'react-native';
-import CustomActions from './CustomActions';
-import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
-import firebase from 'firebase';
-import firestore from 'firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
 import MapView from 'react-native-maps';
-import { Constants, Location, Permissions } from 'expo';
+
+import CustomActions from './CustomActions';
 
 export default class Chat extends Component {
 	constructor(props) {
@@ -36,6 +32,7 @@ export default class Chat extends Component {
 			image: null,
 		};
 
+		// Configuration for Google Firebase Database
 		const firebaseConfig = {
 			apiKey: 'AIzaSyAz4Erk1QKiEg97-hTUUg7hb1gcGvNz4G4',
 			authDomain: 'chat-app-652fd.firebaseapp.com',
@@ -53,7 +50,7 @@ export default class Chat extends Component {
 		this.referenceChatMessages = firebase.firestore().collection('messages');
 	}
 
-	//display messages from AsyncStorage
+	//display messages from AsyncStorage, used to show locally stored messages while online
 	async getMessages() {
 		let messages = '';
 		try {
@@ -66,6 +63,7 @@ export default class Chat extends Component {
 		}
 	}
 
+	// Creates a new message
 	addMessage() {
 		const newMessage = this.state.messages[0];
 
@@ -93,6 +91,7 @@ export default class Chat extends Component {
 		}
 	}
 
+	// deletes Asyncstorage messages
 	async deleteMessages() {
 		try {
 			await AsyncStorage.removeItem('messages');
@@ -189,6 +188,7 @@ export default class Chat extends Component {
 	}
 
 	componentDidMount() {
+		// Checks to see if the user is online
 		NetInfo.fetch().then((connection) => {
 			if (connection.isConnected) {
 				console.log('online');
@@ -271,12 +271,14 @@ export default class Chat extends Component {
 						<KeyboardAvoidingView behavior="height" />
 					) : null}
 				</View>
+
+				{/* The following button was used for development, and is kept for use with future development
 				<View style={{ flex: 1 }}>
 					<Button
 						onPress={() => this.deleteMessages()}
 						title="Delete asyncStorage Messages"
 					/>
-				</View>
+				</View> */}
 			</View>
 		);
 	}

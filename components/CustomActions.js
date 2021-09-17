@@ -4,15 +4,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import MapView from 'react-native-maps';
 import firebase from 'firebase';
-import firestore from 'firebase';
 
 export default class CustomActions extends Component {
 	constructor(props) {
 		super(props);
 	}
 
+	// Pick an image to send from device media library
 	pickImage = async () => {
 		const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
 
@@ -23,9 +22,6 @@ export default class CustomActions extends Component {
 				}).catch((error) => console.log(error));
 
 				if (!result.cancelled) {
-					// this.setState({
-					// 	image: result,
-					// });
 					const imageUrl = await this.uploadImageFetch(result.uri);
 					this.props.onSend({ image: imageUrl });
 				}
@@ -35,6 +31,7 @@ export default class CustomActions extends Component {
 		}
 	};
 
+	// Use the camera to take a picture
 	takePhoto = async () => {
 		const { status } = await Permissions.askAsync(
 			Permissions.MEDIA_LIBRARY,
@@ -48,9 +45,6 @@ export default class CustomActions extends Component {
 				);
 
 				if (!result.cancelled) {
-					// this.setState({
-					// 	image: result,
-					// });
 					const imageUrl = await this.uploadImageFetch(result.uri);
 					this.props.onSend({ image: imageUrl });
 				}
@@ -60,24 +54,7 @@ export default class CustomActions extends Component {
 		}
 	};
 
-	// getLocation = async () => {
-	// 	const { status } = await Permissions.askAsync(Permissions.LOCATION);
-
-	// 	try {
-	// 		if (status === 'granted') {
-	// 			let result = await Location.getCurrentPositionAsync({});
-
-	// 			if (result) {
-	// 				this.setState({
-	// 					location: result,
-	// 				});
-	// 			}
-	// 		}
-	// 	} catch (error) {
-	// 		console.log(error.message);
-	// 	}
-	// };
-
+	// Get user's location
 	getLocation = async () => {
 		try {
 			const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -85,8 +62,6 @@ export default class CustomActions extends Component {
 				const result = await Location.getCurrentPositionAsync(
 					{}
 				).catch((error) => console.log(error));
-				const longitude = JSON.stringify(result.coords.longitude);
-				const altitude = JSON.stringify(result.coords.latitude);
 				if (result) {
 					this.props.onSend({
 						location: {
@@ -101,6 +76,7 @@ export default class CustomActions extends Component {
 		}
 	};
 
+	// Upload image to Firebase storage
 	uploadImageFetch = async (uri) => {
 		const blob = await new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
@@ -128,6 +104,7 @@ export default class CustomActions extends Component {
 		return await snapshot.ref.getDownloadURL();
 	};
 
+	// Defines contents of the cutom actions
 	onActionPress = () => {
 		const options = [
 			'Choose From Library',
@@ -160,6 +137,7 @@ export default class CustomActions extends Component {
 
 	render() {
 		return (
+			// Style below yields a "+" with a circle around it
 			<TouchableOpacity style={[styles.container]} onPress={this.onActionPress}>
 				<View style={[styles.wrapper, this.props.wrapperStyle]}>
 					<Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
